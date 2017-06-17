@@ -1,25 +1,33 @@
-
-
-
 import pandas as pd
 import numpy as np
-#import matplotlib as plt
-
-df = pd.read_csv("C:\Users\nitzan\Desktop\train.csv")
-
-print(df.head(10))
-print("\n Summary of numeircal variables:")
-print(df.describe())                                             # Get summary of numerical variables
-print("\n Frequency Distribution of Property_Area attribute:")
-print(df['Property_Area'].value_counts())                        # Frequency distribution for non-numerical attributes
-print("\n Frequency Distribution of Credit_History attribute:")
-print(df['Credit_History'].value_counts())
+import tkinter as tk
 
 
+path = "C:\Users\Liron\Desktop"
 
-def readStructure (pathToStructureInfoFile):
+def classifier(record):
+    target = "yes"
+    return target
 
-
-
+def classify(path):
+    path_test=path + "\\test.csv"
+    df_test = pd.read_csv(path_test)
+    i = 1
+    for record in df_test.iterrows():
+        target = classifier(record)
+        writetofile(path, i, target)
+        print i
+        i += 1
 
     return
+
+def writetofile(path, i, target):
+    path_output = path + "\\output.txt"
+    with open(path_output, "a") as f:
+        f.write(str(i) + " " + target + "\n")
+    return
+
+
+classify(path)
+
+
