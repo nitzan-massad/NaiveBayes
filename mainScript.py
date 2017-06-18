@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 #import matplotlib as plt
-dict  = {}
+dictStructure  = {}
 
 
 
@@ -9,9 +9,9 @@ def readStructure (pathToStructureInfoFile):
     file = open(pathToStructureInfoFile,"r")
     for line in file:
      tmp = line.split(' ')
-     dict[tmp [1]]=tmp [2]
-    for robi in dict:
-        print robi +" "+ dict [robi]
+     dictStructure[tmp [1]]=tmp [2]
+    #for robi in dictStructure:
+     #   print robi +" " + dictStructure [robi]
     return
 
 
