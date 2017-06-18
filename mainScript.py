@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
-#import matplotlib as plt
-dictStructure  = {}
-
+#import tkinter as tk
+dictStructure = {}
 
 
 def readStructure (pathToStructureInfoFile):
@@ -10,8 +9,8 @@ def readStructure (pathToStructureInfoFile):
     for line in file:
      tmp = line.split(' ')
      dictStructure[tmp [1]]=tmp [2]
-    #for robi in dictStructure:
-     #   print robi +" " + dictStructure [robi]
+    for robi in dictStructure:
+        print robi +" " + dictStructure [robi]
     return
 
 
