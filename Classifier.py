@@ -28,27 +28,29 @@ class Classifier:
         for x in self.m_dictStructure:
             if (self.m_dictStructure[x] == 'NUMERIC'):
                 self.df[x].fillna(self.df[x].mean(), inplace=True)
-                self.df[x] = self.binning(self.df[x])
+                self.df[x] = self.binning(self.df[x], x)
             else:
                 self.df[x].fillna(self.df.mode()[x][0], inplace=True)  # find the most comman value in month
         # print(df.apply(lambda x: sum(x.isnull()), axis=0)) # print the missing values in eche colmn
 
 
-    def binning(self,col):
+    def binning(self,col ,nameOfColmn):
         labels = None
         minval = col.min()
         maxval = col.max()
-        interval = (maxval - minval) * 1.0 / self.m_bins
+        binslocal = int(self.m_bins)
+        interval = (maxval - minval) * 1.0 / binslocal
         # print "maxval: ",maxval
         # print "minval: ",minval
         # print "interval: ",interval
         cut_points = []
-        for x in range(0, self.m_bins + 1):
-            cut_points.append((minval + x * interval))
-        break_points = cut_points
+        for x in range(0, binslocal + 1):
+            cut_points.append(float("{0:.2f}".format(minval + x * interval)))
+
         if not labels:
             labels = range(len(cut_points) - 1)
-        colBin = pd.cut(col, bins=break_points, labels=labels, include_lowest=True)
+        colBin = pd.cut(col, bins=cut_points, labels=labels, include_lowest=True)
+        self.m_dictStructure[nameOfColmn] =labels ;
         return colBin
 
 
@@ -60,19 +62,20 @@ class Classifier:
         return list
 
     def buildClassifier (self):
-        print self.m_dictStructure
-        print "sada"
-
+        m= 2.0
         for attribut in self.m_dictStructure:
-            print attribut
+            self.mainDic[attribut] = {}
             for attributValue in self.m_dictStructure[attribut]:
-                print attributValue
-     # print(df.loc[(df["education"] == "secondary") & (df["marital"] == "married"),["education", "marital"]])
-
-
+                self.mainDic[attribut][attributValue] = {}
+                for classValue in self.m_dictStructure["class"]:
+                    nc =self.df.loc[(self.df[attribut] == attributValue) & (self.df["class"] == classValue),[attribut]].count()
+                    p= 1/len(self.m_dictStructure[attribut])
+                    n = self.df.loc[(self.df["class"] == classValue),["class"]].count ()
+                    self.mainDic[attribut][attributValue][classValue] = (nc + m*p)/(n+m)
 
     def buildModel(self, pathStructure, pathTrain, bins):
           self.m_dictStructure = {}
+          self.mainDic = {}
           self.m_bins = bins
           self.df = pd.read_csv(pathTrain)
           self.readStructure(pathStructure)
