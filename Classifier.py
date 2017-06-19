@@ -7,8 +7,7 @@ class Classifier:
 
 
 
-    def buildModel(self, pathStructure, pathTrain, bins):
-        return
+
     def readStructure(self, pathToStructureInfoFile):
         file = open(pathToStructureInfoFile, "r")
         for line in file:
@@ -52,9 +51,7 @@ class Classifier:
         colBin = pd.cut(col, bins=break_points, labels=labels, include_lowest=True)
         return colBin
 
-    def classifier(self):
-        target = "yes"
-        return target
+
 
     def classify(self, path_test):
         df_test = pd.read_csv(path_test)
@@ -74,13 +71,11 @@ class Classifier:
 
 
 
-
-
-    def buildModel(self, path, bins):
+    def buildModel(self, pathStructure, pathTrain, bins):
           self.m_dictStructure = {}
           self.m_bins = bins
-          self.df = pd.read_csv(path)
-          self.readStructure(path)
+          self.df = pd.read_csv(pathTrain)
+          self.readStructure(pathStructure)
           self.fillMissingValuesAndDiscretization()
           self.buildClassifier()
 
