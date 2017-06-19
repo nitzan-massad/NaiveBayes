@@ -5,9 +5,6 @@ class Classifier:
     def __init__(self):
         self.path = None
 
-
-
-
     def readStructure(self, pathToStructureInfoFile):
         file = open(pathToStructureInfoFile, "r")
         for line in file:
@@ -21,18 +18,13 @@ class Classifier:
 
             self.m_dictStructure[tmp[1]] = tmp[2]
 
-
-    def fillMissingValuesAndDiscretization(self):
-        tmp = 'NUMERIC'
-
+    def fillMissingValuesAndDiscretization(self , df):
         for x in self.m_dictStructure:
             if (self.m_dictStructure[x] == 'NUMERIC'):
-                self.df[x].fillna(self.df[x].mean(), inplace=True)
-                self.df[x] = self.binning(self.df[x], x)
+                df[x].fillna(df[x].mean(), inplace=True)
+                df[x] = self.binning(df[x], x)
             else:
-                self.df[x].fillna(self.df.mode()[x][0], inplace=True)  # find the most comman value in month
-        # print(df.apply(lambda x: sum(x.isnull()), axis=0)) # print the missing values in eche colmn
-
+                df[x].fillna(df.mode()[x][0], inplace=True)  # find the most comman value in month
 
     def binning(self,col ,nameOfColmn):
         labels = None
@@ -53,13 +45,31 @@ class Classifier:
         self.m_dictStructure[nameOfColmn] =labels ;
         return colBin
 
-
-
     def classify(self, path_test):
-        df_test = pd.read_csv(path_test)
+        ans = []
+        attributName= []
+        file = open(path_test, "r")
+        # file descrtziantion !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        firstLoop = 0 ;
+        for row in file:
+            if row[len(row) - 1] == '\n':
+                row = row[:-1]
+            if firstLoop==0:
+                attributName =row.split(',')
+                firstLoop=1
+                continue
+            attribut = row.split(',')
+            results=[]
+            for classValue in self.m_dictStructure["class"]:
+                i = 0
+                tmpResult = 1
+                for attributValue in attribut:
+                    tmpResult= tmpResult * self.mainDic[attributName[i]][attributValue][classValue]
+                    i += 1
+                    results.append(tmpResult)
+            ans.append(max(results))
 
-        list = ['yes', 'yes', 'no']
-        return list
+        return ans
 
     def buildClassifier (self):
         m= 2.0
@@ -69,7 +79,7 @@ class Classifier:
                 self.mainDic[attribut][attributValue] = {}
                 for classValue in self.m_dictStructure["class"]:
                     nc =self.df.loc[(self.df[attribut] == attributValue) & (self.df["class"] == classValue),[attribut]].count()
-                    p= 1/len(self.m_dictStructure[attribut])
+                    p= 1.0/len(self.m_dictStructure[attribut])
                     n = self.df.loc[(self.df["class"] == classValue),["class"]].count ()
                     self.mainDic[attribut][attributValue][classValue] = (nc + m*p)/(n+m)
 
@@ -79,7 +89,7 @@ class Classifier:
           self.m_bins = bins
           self.df = pd.read_csv(pathTrain)
           self.readStructure(pathStructure)
-          self.fillMissingValuesAndDiscretization()
+          self.fillMissingValuesAndDiscretization(self.df)
           self.buildClassifier()
 
 
