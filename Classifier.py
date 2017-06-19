@@ -7,19 +7,19 @@ class Classifier:
 
 
 
+    def buildModel(self, pathStructure, pathTrain, bins):
+        return
     def readStructure(self, pathToStructureInfoFile):
         file = open(pathToStructureInfoFile, "r")
         for line in file:
             tmp = line.split(' ')
-            if len(tmp)==1:
-                continue
-            if tmp[2][len(tmp[2]) - 1] == '\n':
+            if tmp[2][len(tmp[2]) - 1]=='\n':
                 tmp[2] = tmp[2][:-1]
             if (tmp[2] != 'NUMERIC'):
                 tmp[2] = tmp[2][:-1]
                 tmp[2] = tmp[2][1:]
                 tmp[2] = tmp[2].split(',')
-            print tmp[1]," ",tmp[2]
+
             self.m_dictStructure[tmp[1]] = tmp[2]
 
 

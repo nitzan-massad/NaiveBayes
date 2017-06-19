@@ -59,10 +59,12 @@ class Main(Frame):
         if self.entry_bins.get().isdigit():
             self.bins = self.entry_bins.get()
             path_train = self.dir + "\\train.csv"
+            path_structure = self.dir + "\\Structure.txt"
             if self.checkPath(path_train):
-                Classifier.buildModel(self.classifier, path_train,  self.bins)
-                self.isBuild = True
-                tkMessageBox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
+                if self.checkPath(path_structure):
+                    Classifier.buildModel(self.classifier, path_structure, path_train, self.bins)
+                    self.isBuild = True
+                    tkMessageBox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
         else:
             tkMessageBox.showinfo("Naive Bayes Classifier", "Please enter a valid value for discretization bins!")
 
