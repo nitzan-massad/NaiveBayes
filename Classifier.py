@@ -5,17 +5,21 @@ class Classifier:
     def __init__(self):
         self.path = None
 
+
+
     def readStructure(self, pathToStructureInfoFile):
         file = open(pathToStructureInfoFile, "r")
         for line in file:
             tmp = line.split(' ')
-            if tmp[2][len(tmp[2]) - 1]=='\n':
+            if len(tmp)==1:
+                continue
+            if tmp[2][len(tmp[2]) - 1] == '\n':
                 tmp[2] = tmp[2][:-1]
             if (tmp[2] != 'NUMERIC'):
                 tmp[2] = tmp[2][:-1]
                 tmp[2] = tmp[2][1:]
                 tmp[2] = tmp[2].split(',')
-
+            print tmp[1]," ",tmp[2]
             self.m_dictStructure[tmp[1]] = tmp[2]
 
 
@@ -59,11 +63,15 @@ class Classifier:
         return list
 
     def buildClassifier (self):
+        print self.m_dictStructure
+        print "sada"
 
-       #for attribut in self.m_dictStructure:
-
+        for attribut in self.m_dictStructure:
+            print attribut
+            for attributValue in self.m_dictStructure[attribut]:
+                print attributValue
      # print(df.loc[(df["education"] == "secondary") & (df["marital"] == "married"),["education", "marital"]])
-      return
+
 
 
 
