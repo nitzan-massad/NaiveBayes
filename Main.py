@@ -73,7 +73,7 @@ class Main(Frame):
         path_output = self.dir + "\\output.txt"
         with open(path_output, "a") as f:
             for i, v in enumerate(targets):
-                f.write(str(i+1) + " " + v + "\n")
+                f.write(str(i+1) + " " + str(v) + "\n")
 
     # check if the file exist, and check pre processing happend already before writing results and finishing
     def classify(self):
