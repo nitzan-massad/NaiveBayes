@@ -34,7 +34,7 @@ class Main(Frame):
         Frame.__init__(self, master)
         self.classifier = Classifier()
         self.isBuild = False
-        self.dir = None
+        self.dir = ""
         self.bins = None
         self.pack()
         self.showWindow()
@@ -47,30 +47,35 @@ class Main(Frame):
     # check if a path to file is exist, return true or false accordingly and show error if needed
     def checkPath(self, path):
         if not os.path.exists(path):
-            tkMessageBox.showinfo("Error Message", "path: " + path + "doesn't exist")
+            tkMessageBox.showinfo("Error Message", "path: " + path + " doesn't exist")
+            return False
+        if os.stat(path).st_size < 3:
+            tkMessageBox.showinfo("Error Message", "file in path: " + path + " is empty")
             return False
         return True
 
     # call the pre processing functions in the classifier, and chanfe current boolean to true
     def buildModel(self):
-        self.bins = self.entry_bins.get()
-        path_train = self.dir + "\\train.csv"
-        if self.checkPath(path_train):
-            Classifier.buildModel(self.classifier, path_train,  self.bins)
-            self.isBuild = True
-            tkMessageBox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
+        if self.entry_bins.get().isdigit():
+            self.bins = self.entry_bins.get()
+            path_train = self.dir + "\\train.csv"
+            if self.checkPath(path_train):
+                Classifier.buildModel(self.classifier, path_train,  self.bins)
+                self.isBuild = True
+                tkMessageBox.showinfo("Naive Bayes Classifier", "Building classifier using train-set is done!")
+        else:
+            tkMessageBox.showinfo("Naive Bayes Classifier", "Please enter a valid value for discretization bins!")
 
     # write the results to output file, receive a list
     def writeToFile(self, targets):
         path_output = self.dir + "\\output.txt"
         with open(path_output, "a") as f:
             for i, v in enumerate(targets):
-               # print i+1, v
                 f.write(str(i+1) + " " + v + "\n")
 
     # check if the file exist, and check pre processing happend already before writing results and finishing
     def classify(self):
-        path_test = self.dir + "\\testtest.csv"
+        path_test = self.dir + "\\test.csv"
         if self.checkPath(path_test):
             if not self.isBuild:
                 tkMessageBox.showinfo("Naive Bayes Classifier", "You must Build before you can Classify!")
