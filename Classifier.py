@@ -5,7 +5,7 @@ class Classifier:
     def __init__(self):
         self.path = None
 
-    def buildModel(self, path, bins):
+    def buildModel(self, pathStructure, pathTrain, bins):
         return
 
 
