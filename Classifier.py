@@ -1,5 +1,6 @@
 import pandas as pd
 import copy
+import math
 class Classifier:
 
 # initaliz the class and all the parmaters
@@ -26,9 +27,9 @@ class Classifier:
     def fillMissingValuesAndDiscretization(self, df):
         for x in self.m_dictStructure:
             if (self.m_dictStructure[x] == 'NUMERIC'):
-                #df[x].fillna(df[x].mean(), inplace=True)
-                for classValue in self.m_dictStructure["class"]:
-                    self.df.loc[(self.df["class"] == classValue), ["class"]].fillna(df[x].mean(), inplace=True)
+                df[x].fillna(df[x].mean(), inplace=True)
+                #for classValue in self.m_dictStructure["class"]:
+                    #self.df.loc[(self.df["class"] == classValue), ["class"]].fillna(df[x].mean(), inplace=True)
                 df[x] = self.binning(df[x], x)
             else:
                 df[x].fillna(df.mode()[x][0], inplace=True)  # find the most comman value in month
@@ -72,13 +73,16 @@ class Classifier:
         file = self.discretization_test(file)
 
         for rowNumber in range(len(file["class"])):
+
             result= []
             resultClassName= []
             for classValue in self.m_dictStructure["class"]:
                tmpResult = 1.0
                for attribut in self.m_dictStructure:
                    if (attribut!="class"):
-                    tmpResult=float(tmpResult*float(self.mainDic[attribut][file[attribut][rowNumber]][classValue]))
+                       if self.testStructure[attribut]=='NUMERIC' and math.isnan(file[attribut][rowNumber]):
+                           continue
+                       tmpResult=float(tmpResult*float(self.mainDic[attribut][file[attribut][rowNumber]][classValue]))
                result.append(tmpResult)
                resultClassName.append(classValue)
             index = result.index(max(result))
@@ -96,9 +100,10 @@ class Classifier:
             for attributValue in self.m_dictStructure[attribut]:
                 self.mainDic[attribut][attributValue] = {}
                 for classValue in self.m_dictStructure["class"]:
-                    nc =self.df.loc[(self.df[attribut] == attributValue) & (self.df["class"] == classValue),[attribut]].count()
+                    nc =float(self.df.loc[(self.df[attribut] == attributValue) & (self.df["class"] == classValue),[attribut]].count())
                     p= 1.0/len(self.m_dictStructure[attribut])
-                    n = self.df.loc[(self.df["class"] == classValue),["class"]].count ()
+                    n = float(self.df.loc[(self.df["class"] == classValue),["class"]].count())
+                    tmp =  float(nc + m*p)/(n+m)
                     self.mainDic[attribut][attributValue][classValue] = float(nc + m*p)/(n+m)
 
 # the function that we call first, she build all the modle and all the data sets for calssficiton in the futhre
